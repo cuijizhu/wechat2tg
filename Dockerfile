@@ -1,9 +1,11 @@
 # 使用适用于 ARM64 的 Node.js 最新基础镜像
 FROM arm64v8/node:16
 
-# 安装 Chromium 和其他必要的依赖
-# 分开运行 apt-get update 和 apt-get install 以提高清晰度
-RUN apt-get update && apt-get install -y \
+# 更新软件源
+RUN apt-get update
+
+# 安装 Chromium 和其他必要的依赖，添加调试标志
+RUN apt-get install -y -o Debug::pkgProblemResolver=yes -o Debug::Acquire::http=yes \
     ca-certificates \
     fonts-liberation \
     libasound2 \
