@@ -1,5 +1,5 @@
-# 使用适用于 ARM64 的 Ubuntu 最新稳定版作为基础镜像
-FROM ubuntu:latest
+# 使用适用于 ARM64 的 Debian 最新稳定版作为基础镜像
+FROM debian:bullseye-slim
 
 # 更新软件源
 RUN apt-get update -o Debug::Acquire::http=true && \
@@ -50,11 +50,11 @@ RUN apt-get install -y \
     libxtst6 \
     wget \
     xdg-utils \
-    chromium-browser
+    chromium
 
 # 设置 Puppeteer 环境变量以使用系统中的 Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium-browser
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 # 创建应用目录
 RUN mkdir -p /app/config
@@ -62,14 +62,6 @@ WORKDIR /app
 
 # 复制 package.json 和 package-lock.json（如果存在）
 COPY package*.json ./
-
-# 设置环境变量
-ENV BOT_TOKEN=""
-ENV PROTOCOL=""
-ENV HOST=""
-ENV PORT=""
-ENV USERNAME=""
-ENV PASSWORD=""
 
 # 安装依赖
 RUN npm install
