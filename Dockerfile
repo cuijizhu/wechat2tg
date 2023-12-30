@@ -1,10 +1,11 @@
 # 使用适用于 ARM64 的 CentOS 最新稳定版作为基础镜像
 FROM centos:centos8
 
-# 更新软件源并安装 EPEL 仓库
-RUN yum update -y && \
-    yum install -y epel-release && \
-    yum clean all
+# 更新软件源
+RUN yum update -y && yum clean all
+
+# 安装 EPEL 仓库
+RUN yum install -y epel-release
 
 # 安装 curl、gnupg 和其他必要工具
 RUN yum install -y curl gpg ca-certificates redhat-lsb-core
