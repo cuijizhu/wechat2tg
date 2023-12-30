@@ -1,12 +1,21 @@
-# 使用适用于 ARM64 的 Node.js 最新基础镜像
-FROM arm64v8/node:16
+# 使用适用于 ARM64 的 Ubuntu 最新稳定版作为基础镜像
+FROM ubuntu:latest
 
 # 更新软件源
-RUN apt-get update
+RUN apt-get update -o Debug::Acquire::http=true && \
+    apt-get upgrade -y
 
-# 安装 Chromium 和其他必要的依赖，添加调试标志
-RUN apt-get install -y -o Debug::pkgProblemResolver=yes -o Debug::Acquire::http=yes \
-    ca-certificates \
+# 安装 curl、gnupg 和其他必要工具
+RUN apt-get install -y curl gnupg ca-certificates lsb-release
+
+# 添加 NodeSource 仓库以安装 Node.js 16
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+
+# 安装 Node.js 和 npm
+RUN apt-get install -y nodejs
+
+# 安装 Chromium 和其他必要的依赖
+RUN apt-get install -y \
     fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
@@ -39,14 +48,13 @@ RUN apt-get install -y -o Debug::pkgProblemResolver=yes -o Debug::Acquire::http=
     libxrender1 \
     libxss1 \
     libxtst6 \
-    lsb-release \
     wget \
     xdg-utils \
-    chromium
+    chromium-browser
 
 # 设置 Puppeteer 环境变量以使用系统中的 Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium-browser
 
 # 创建应用目录
 RUN mkdir -p /app/config
