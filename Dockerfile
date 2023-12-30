@@ -1,53 +1,53 @@
-# 使用适用于 ARM64 的 Debian 最新稳定版作为基础镜像
-FROM debian:bullseye-slim
+# 使用适用于 ARM64 的 CentOS 最新稳定版作为基础镜像
+FROM centos:centos8
 
-# 更新软件源
-RUN apt-get update -o Debug::Acquire::http=true && \
-    apt-get upgrade -y
+# 更新软件源并安装 EPEL 仓库
+RUN yum update -y && \
+    yum install -y epel-release && \
+    yum clean all
 
-# 安装 curl、gnupg、编译工具和其他必要工具
-RUN apt-get install -y curl gnupg ca-certificates lsb-release build-essential python3
+# 安装 curl、gnupg 和其他必要工具
+RUN yum install -y curl gpg ca-certificates redhat-lsb-core
 
 # 添加 NodeSource 仓库以安装 Node.js 16
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash -
 
 # 安装 Node.js 和 npm
-RUN apt-get install -y nodejs
+RUN yum install -y nodejs
 
 # 安装 Chromium 和其他必要的依赖
-RUN apt-get install -y \
-    fonts-liberation \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libc6 \
-    libcairo2 \
-    libcups2 \
-    libdbus-1-3 \
-    libexpat1 \
-    libfontconfig1 \
-    libgbm1 \
-    libgcc1 \
-    libglib2.0-0 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libstdc++6 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxi6 \
-    libxrandr2 \
-    libxrender1 \
-    libxss1 \
-    libxtst6 \
+RUN yum install -y \
+    liberation-fonts \
+    alsa-lib \
+    atk \
+    at-spi2-atk \
+    glibc \
+    cairo \
+    cups-libs \
+    dbus-libs \
+    expat \
+    fontconfig \
+    gbm \
+    gcc \
+    glib2 \
+    gtk3 \
+    nspr \
+    nss \
+    pango \
+    pangox-compat \
+    stdc++ \
+    libX11 \
+    libxcb \
+    libXcomposite \
+    libXcursor \
+    libXdamage \
+    libXext \
+    libXfixes \
+    libXi \
+    libXrandr \
+    libXrender \
+    libXScrnSaver \
+    libXtst \
     wget \
     xdg-utils \
     chromium
