@@ -2,14 +2,14 @@ version: '3'
 
 services:
   wechat2tg:
-    image: finalpi/wechat2tg:latest
+    image: ghcr.io/cuijizhu/wechat2tg/wechat2tg:latest
     container_name: wx2tg
     volumes:
       - ./config:/app/config
     environment:
       - BOT_TOKEN=
-      - HOST=
-      - PORT=
+      # - HOST=
+      # - PORT=
       # 代理种类
       - PROTOCOL=socks5
       # 用户名密码可选
