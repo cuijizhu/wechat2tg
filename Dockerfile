@@ -5,8 +5,8 @@ FROM debian:bullseye-slim
 RUN apt-get update -o Debug::Acquire::http=true && \
     apt-get upgrade -y
 
-# 安装 curl、gnupg 和其他必要工具
-RUN apt-get install -y curl gnupg ca-certificates lsb-release
+# 安装 curl、gnupg、编译工具和其他必要工具
+RUN apt-get install -y curl gnupg ca-certificates lsb-release build-essential python3
 
 # 添加 NodeSource 仓库以安装 Node.js 16
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
