@@ -1,9 +1,5 @@
 # 使用适用于 ARM64 的 CentOS 最新稳定版作为基础镜像
-FROM centos:8
-
-# 替换为阿里云的 CentOS 8 源
-RUN sed -i 's|mirrorlist.centos.org|mirrors.aliyun.com|g' /etc/yum.repos.d/CentOS-* && \
-    yum makecache
+FROM centos:centos8
 
 # 更新软件源
 RUN yum update -y && yum clean all
