@@ -50,12 +50,7 @@ RUN yum install -y \
     libXScrnSaver \
     libXtst \
     wget \
-    xdg-utils \
-    chromium
-
-# 设置 Puppeteer 环境变量以使用系统中的 Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+    xdg-utils
 
 # 创建应用目录
 RUN mkdir -p /app/config
@@ -64,8 +59,21 @@ WORKDIR /app
 # 复制 package.json 和 package-lock.json（如果存在）
 COPY package*.json ./
 
-# 安装依赖
+# 安装依赖（包括 Puppeteer）
 RUN npm install
+
+# 禁用 Puppeteer 默认的 Chromium 下载
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
+# 手动下载和安装适用于 ARM64 的 Chromium 到 puppeteer/.local-chromium
+ARG CHROMIUM_VERSION=120.0.6099.129-1
+RUN mkdir -p node_modules/puppeteer/.local-chromium && \
+    curl -Lo chromium-browser.tar.xz https://archlinuxarm.org/packages/aarch64/chromium/download && \
+    tar -xJf chromium-browser.tar.xz -C node_modules/puppeteer/.local-chromium --strip-components=1 && \
+    rm chromium-browser.tar.xz
+
+# 设置 Puppeteer 环境变量以使用手动安装的 Chromium
+ENV PUPPETEER_EXECUTABLE_PATH /app/node_modules/puppeteer/.local-chromium/chrome
 
 # 复制项目文件
 COPY . .
