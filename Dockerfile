@@ -8,26 +8,12 @@ RUN apt-get update && apt-get install -y \
     libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 \
     libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 \
     libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 lsb-release \
-    wget xdg-utils && \
+    wget xdg-utils chromium && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-COPY package*.json ./
-
-# 禁用 Puppeteer 默认的 Chromium 下载
+# 设置环境变量
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-
-# 下载 Chromium 并解压到 puppeteer/.local-chromium
-ARG CHROMIUM_URL=http://ftp.cn.debian.org/debian/pool/main/c/chromium/chromium_120.0.6099.129-1_arm64.deb
-RUN wget $CHROMIUM_URL -O chromium.deb && \
-    mkdir -p /app/node_modules/puppeteer/.local-chromium && \
-    dpkg-deb -R chromium.deb /tmp/chromium-deb && \
-    cp -R /tmp/chromium-deb/usr/lib/chromium/* /app/node_modules/puppeteer/.local-chromium && \
-    rm -rf chromium.deb /tmp/chromium-deb
-
-# 设置 Puppeteer 环境变量以使用手动安装的 Chromium
-ENV PUPPETEER_EXECUTABLE_PATH /app/node_modules/puppeteer/.local-chromium/chrome
-
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 ENV BOT_TOKEN=""
 ENV PROTOCOL=""
 ENV HOST=""
@@ -35,11 +21,15 @@ ENV PORT=""
 ENV USERNAME=""
 ENV PASSWORD=""
 
-# 安装 puppeteer-core
-RUN npm install puppeteer-core
+WORKDIR /app
+COPY package*.json ./
 
 # 安装其他 npm 依赖
 RUN npm install
+
+# 非root用户运行
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+USER appuser
 
 COPY . .
 
